@@ -1,0 +1,6 @@
+<?php
+
+if ($user_ok == true) {
+	header("location: search.php");
+	exit();
+}

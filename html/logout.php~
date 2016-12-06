@@ -1,0 +1,6 @@
+<?php
+unset($_COOKIE['username']);
+unset($_COOKIE['password']);
+
+//header("location: index.php");
+?>

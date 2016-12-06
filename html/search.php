@@ -1,0 +1,83 @@
+<?php
+include_once("db.php");
+if (isset($_COOKIE['username']) && isset($_COOKIE['password']))
+{
+	$username = $_COOKIE['username'];
+	$pw = $_COOKIE['password'];
+	$sql = "SELECT id, username, password FROM users WHERE username='$username' AND password = '$pw' LIMIT 1";
+
+	$query = mysqli_query($db_conf, $sql);
+        $row = mysqli_fetch_row($query);
+	if ($row == NULL) {
+		header("location: index.php");
+	}
+} else {
+	header("location: index.php");
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <?php include('header.php'); ?>
+  </head>
+<body>
+ <!-- Static navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Secure Search Area</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="logout.php">Logout</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+<div class="container">
+	<div class="row">
+		<h2>Please enter keywords for secret websites you are you looking for...</h2>
+
+		<form id="custom-search-input" action="search.php" method="GET">
+                    <div class="input-group col-md-12">
+                                <input type="text" name="q" class="search-query form-control" placeholder="<?php echo isset($_GET['q']) ? $_GET['q'] : 'Search'; ?>" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-danger" type="button">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </span>
+                            </div>
+		      </form>
+
+		<?php
+
+		if ($_GET['q'] != NULL) {
+			include_once("db.php");
+			$query = $_GET['q'];
+			$sql = "SELECT * FROM websites WHERE url LIKE '%$query%'";
+			$query = mysqli_query($db_conf, $sql);
+			echo "You have searched for: " . $_GET['q'] . '<br><br>';
+
+			echo mysqli_num_rows($query) != 0 ? "<br>Results:<br>" : "Nothing has been found<br>";
+
+			while ($row = mysqli_fetch_row($query))
+			{
+				printf ("%s: <a href='http://%s'>%s</a>\n",$row[0],$row[1],$row[1]);
+			}
+		}
+
+		?>
+	</div>
+</div>
+</body>
+</html>
